@@ -141,27 +141,67 @@ Paper links (arXiv / DOI / PDF URL) · safe downloader · automatic section dete
 
 ## Quick Start
 
-Pick **one** way to run PaperLens. **Google Colab needs no installation.**
+Pick **one** way to run PaperLens:
+
+| I want to... | Choose | Install anything? |
+|---|---|:---:|
+| Try it now from any computer | **[Option 1: Google Colab](#option-1-google-colab-no-installation)** | No |
+| Use it on my own PC with no session limits | **[Option 2: My computer](#option-2-run-on-your-own-computer)** | Yes, about 10 minutes |
+| Summarize one paper from a terminal | **Option 3: Command line** | Same as Option 2 |
+| Share it with others through a link | **Option 4: Free hosting** | No (host once) |
+
+---
 
 ### Option 1: Google Colab (no installation)
 
-**1. Get the code.** Download or clone it, in Colab (replace `YOUR_USERNAME`):
+Colab is a free online notebook from Google. Nothing is installed on your computer.
+
+**Step 1: Open a new notebook.** Go to [colab.research.google.com](https://colab.research.google.com) and choose **New notebook**. *(Optional: Runtime → Change runtime type → T4 GPU makes it faster.)*
+
+**Step 2: Get the code.** Use **Method A** or **Method B** in a code cell.
+
+**Method A: clone from GitHub** (replace `YOUR_USERNAME`)
 ```python
 !git clone https://github.com/YOUR_USERNAME/paperlens.git
 %cd paperlens
 ```
-Prefer a zip? On GitHub click **Code → Download ZIP**, upload it with the 📁 icon in Colab's sidebar, then:
-```python
-!unzip -q -o paperlens-main.zip -d /content      # use your zip's real name
-%cd /content/paperlens-main                      # and its real folder name
-```
 
-**2. Install the libraries** (1–3 minutes):
+**Method B: upload the ZIP.** On GitHub click **Code → Download ZIP**, then in Colab click the 📁 **Files** icon on the left, press the upload button and choose the zip. Then run:
+```python
+!unzip -q -o /content/paperlens-main.zip -d /content     # the zip's real name
+%cd /content/paperlens-main                              # the extracted folder's real name
+!ls
+```
+> If your file is called `paperlens.zip`, use `/content/paperlens.zip` and `%cd /content/paperlens`.
+> `!ls` should list `app.py`, `requirements.txt`, `paperlens` and more. If it doesn't, you are in the wrong folder.
+
+**Step 3: Install the libraries** (1–3 minutes)
 ```python
 !pip -q install -r requirements.txt
 ```
+*(Some red "dependency conflict" warnings are normal in Colab. Ignore them.)*
 
-**3. Launch the app** with one cell. It starts PaperLens and a public link:
+**Step 4: Launch the app**
+```python
+!python app.py --share
+```
+After a few seconds you will see:
+```
+* Running on local URL:  http://127.0.0.1:7860
+* Running on public URL: https://xxxxxxxxxxxx.gradio.live
+```
+👉 **Open the `gradio.live` link.** The `127.0.0.1` link only exists inside Colab, so ignore it. **Leave the cell running** (the spinning square means the app is alive).
+
+**Step 5: Use it.** Type an arXiv id such as `1810.04805` in the **Paper link** tab and press **Summarize**. The first run downloads the BERT model (about a minute); later runs are fast.
+
+---
+
+#### 🛟 Plan B: the link shows "504 Gateway Time-out", a blank page, or won't launch
+
+This is **not a PaperLens problem**. The app is running fine inside Colab; Gradio's free public-link service is sometimes overloaded. Use a **Cloudflare tunnel** instead, which has worked reliably:
+
+1. **Stop** the running cell (click the ■ square).
+2. Run this one cell:
 ```python
 !pkill -f app.py; pkill -f cloudflared
 !nohup python -u app.py > app.log 2>&1 &
@@ -171,17 +211,14 @@ Prefer a zip? On GitHub click **Code → Download ZIP**, upload it with the 📁
 !sleep 12
 !grep -o "https://[a-z0-9-]*\.trycloudflare\.com" /content/cf.log | head -1
 ```
-**4.** Open the `https://….trycloudflare.com` link that is printed. Type an arXiv id such as `1810.04805` and press **Summarize**.
+3. Open the **`https://….trycloudflare.com`** link it prints. If it does not load right away, wait 10–20 seconds and refresh.
 
-> 💡 **Notes**
-> - Links starting with `127.0.0.1` never open from your own computer. Use the public link.
-> - The link changes every run and stops when the Colab session ends.
-> - A GPU is optional: *Runtime → Change runtime type → T4 GPU*.
-> - The first run downloads the BERT model (about a minute). Later runs are fast.
-> - You can also open [`notebooks/Colab_Launcher.ipynb`](notebooks/Colab_Launcher.ipynb) which contains all of this.
+> **Nothing printed?** Run `!tail -5 /content/cf.log` and `!tail -5 app.log` to see what happened, or simply run the last two lines of the cell again.
 
 <details>
-<summary><b>No web link? Run it directly in a notebook cell</b></summary>
+<summary><b>🛟 Plan C: no web link at all (always works)</b></summary>
+
+Run PaperLens directly in a notebook cell. Nothing leaves Colab, so no link is needed:
 
 ```python
 from paperlens import SummarizerConfig, run_from_source, benchmark_methods
@@ -198,35 +235,91 @@ dashboard(res); plt.show()
 ```
 </details>
 
+> 💡 **Colab good-to-knows**
+> - Public links change every run and stop when the Colab session ends. Just run the cells again.
+> - Colab disconnects after a while of inactivity. Re-run **Step 3** and **Step 4** (or Plan B).
+> - All the commands above are also in [`notebooks/Colab_Launcher.ipynb`](notebooks/Colab_Launcher.ipynb).
+
+---
+
 ### Option 2: Run on your own computer
 
-**Requirements:** Python 3.10 or newer, about 2 GB of free disk space (the PyTorch library and the BERT model), and an internet connection for the first run. A GPU is not needed.
+Prefer your own machine? These steps work on **Windows, macOS and Linux**. No GPU is needed.
 
-**1. Download the project**
-```bash
-git clone https://github.com/YOUR_USERNAME/paperlens.git
-cd paperlens
-```
-or click **Code → Download ZIP** on GitHub, extract it, and open a terminal inside the folder.
+**Before you start**
 
-**2. Create a virtual environment** (recommended)
+- [ ] **Python 3.10 or newer.** Check with `python --version` (or `python3 --version`). If it is missing, install it from [python.org](https://www.python.org/downloads/). **On Windows, tick "Add Python to PATH"** in the installer.
+- [ ] About **2 GB of free disk space** (PyTorch and the BERT model are large).
+- [ ] An internet connection for the first run. After the models are downloaded, you can summarize PDFs you already have without internet. Links need internet.
+- [ ] *(Optional)* [Git](https://git-scm.com/downloads). You can use the ZIP download instead.
+
+**Step 1: Download the project**
+
+- **With Git:**
+  ```bash
+  git clone https://github.com/YOUR_USERNAME/paperlens.git
+  ```
+- **Without Git:** on the GitHub page click **Code → Download ZIP**, then extract it (Windows: right-click → *Extract All*; macOS: double-click).
+
+**Step 2: Open a terminal inside the project folder**
+
+| System | How |
+|---|---|
+| **Windows** | Open the folder in File Explorer, click the address bar, type `powershell`, press **Enter** |
+| **macOS** | Right-click the folder → **New Terminal at Folder** (or run `cd` followed by the folder path) |
+| **Linux** | Right-click inside the folder → **Open in Terminal** |
+| **VS Code** | **File → Open Folder**, then **Terminal → New Terminal** |
+
+**Step 3: Create a virtual environment** *(recommended: it keeps PaperLens's libraries separate from the rest of your computer)*
 
 | Windows (PowerShell) | macOS / Linux |
 |---|---|
 | `python -m venv .venv` | `python3 -m venv .venv` |
 | `.venv\Scripts\Activate.ps1` | `source .venv/bin/activate` |
 
-**3. Install**
+You should now see `(.venv)` at the start of your terminal line.
+> **Windows says "running scripts is disabled"?** Run this once, then activate again:
+> `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
+
+**Step 4: Install** (3–10 minutes; PyTorch is a big download)
 ```bash
 pip install -r requirements.txt
 ```
-*(Optional: to install as a package with the `paperlens` command, run `pip install -e .`)*
+> 💡 Short on disk space or no GPU? Install the smaller CPU-only PyTorch first:
+> `pip install torch --index-url https://download.pytorch.org/whl/cpu`, then run the command above.
 
-**4. Start the web app**
+**Step 5: Start the app**
 ```bash
 python app.py
 ```
-Open **http://127.0.0.1:7860** in your browser. Add `--share` for a temporary public link.
+Open **http://127.0.0.1:7860** in your browser. This link **does** work on your own computer. Stop the app any time with **Ctrl + C** in the terminal.
+
+**Step 6: Use it.** Paste an arXiv id (try `1810.04805`), upload a PDF, or paste text, then press **Summarize**. The very first run downloads the BERT model.
+
+**Next time you want to use it**
+```bash
+cd paperlens
+source .venv/bin/activate          # Windows: .venv\Scripts\Activate.ps1
+python app.py
+```
+**Get the latest version:** run `git pull` inside the folder (or download the ZIP again).
+
+**Want a link you can send to a friend?** Run `python app.py --share` for a temporary public link.
+
+<details>
+<summary><b>Local problems and fixes</b></summary>
+
+| Problem | Fix |
+|---|---|
+| `'python' is not recognized` / `command not found` | Reinstall Python and tick **Add to PATH**; on macOS/Linux try `python3` and `pip3` |
+| `pip` not found | Use `python -m pip install -r requirements.txt` |
+| Installing PyTorch fails | Use Python 3.10 to 3.12, then try the CPU-only command in Step 4 |
+| `Address already in use` / port busy | Run `python app.py --port 7861` and open that port instead |
+| Page doesn't open | Make sure the terminal still shows the app running, and use `http://127.0.0.1:7860` |
+| Very slow first run | It is downloading the model (90 to 440 MB). Later runs are quick |
+</details>
+
+---
 
 ### Option 3: Command line
 ```bash
@@ -462,7 +555,7 @@ python -m pytest -q
 | Problem | Cause and fix |
 |---|---|
 | `127.0.0.1:7860` refuses to connect (Colab) | That address is Colab's own machine. Open the public `trycloudflare.com` or `gradio.live` link instead |
-| `504 Gateway Time-out` on a `gradio.live` link | Gradio's free tunnel is unreliable at times. Use the Cloudflare cell in [Quick Start](#option-1-google-colab-no-installation), or run the notebook version |
+| `504 Gateway Time-out` or a blank page on a `gradio.live` link | Gradio's free public link is sometimes overloaded; the app itself is fine. Use **Plan B (Cloudflare tunnel)** in [Quick Start](#option-1-google-colab-no-installation), or **Plan C** to run it in the notebook |
 | *"The link did not return a PDF"* / *"needs a login"* | The publisher blocks scripts (IEEE, ScienceDirect, …). Download the PDF in your browser and use **Upload PDF** |
 | *"Links to private/internal addresses are not allowed"* | Update to v1.1.1 or later (DOI handling was fixed) |
 | Uploaded a PDF but still got a link error | Make sure you are on the **Upload PDF** tab (v1.1.1+ uses the active tab) |
