@@ -4,7 +4,6 @@
 
 <br/>
 
-![Case Study](https://img.shields.io/badge/Type-Case%20Study-db2777?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![BERT](https://img.shields.io/badge/Model-BERT-6366f1?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)
@@ -18,7 +17,7 @@
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Cipher-Sheild/paperlens/blob/main/notebooks/Colab_Launcher.ipynb)
 
-**[Case Study](#case-study) · [Demo](#demo) · [Quick Start](#quick-start) · [How It Works](#how-it-works) · [Usage](#usage) · [Evaluation](#evaluation) · [FAQ](#troubleshooting--faq)**
+**[Why I Built This](#why-i-built-this) · [Demo](#demo) · [Quick Start](#quick-start) · [How It Works](#how-it-works) · [Usage](#usage) · [Evaluation](#evaluation) · [FAQ](#troubleshooting--faq)**
 
 </div>
 
@@ -26,9 +25,9 @@
 
 ## Overview
 
-**PaperLens** reads a research paper's **Introduction** and **Conclusion**, understands every sentence with a pre-trained **BERT** model, and returns a **concise, structured and measurable** summary. It is explainable too: you can see exactly which sentences were chosen and what role each one plays (research problem, approach, findings, conclusion).
+**PaperLens is a first-pass reading assistant for peer reviewers and researchers.** It reads a research paper's **Introduction** and **Conclusion**, understands every sentence with a pre-trained **BERT** model, and returns a **concise, structured and measurable** summary. It is explainable too: you can see exactly which sentences were chosen and what role each one plays (research problem, approach, findings, conclusion).
 
-> 📚 **This project is a case study** in applied NLP: *"Research Paper Abstract Summarization using a pre-trained BERT-based model in Google Colab with Python."* It starts from the assignment and grows into a complete, tested, deployable application.
+> 🎓 **Built by a peer reviewer, for peer reviewers.** When a conference hands you dozens of manuscripts, you need to know quickly what each one claims so you can decide where to dig deeper. That is what PaperLens does. [Read the story below](#why-i-built-this).
 
 <table>
 <tr>
@@ -39,12 +38,17 @@
 </tr>
 </table>
 
+| | |
+|---|---|
+| **Input** | A paper's Introduction and Conclusion: found automatically in a PDF or arXiv link, or pasted by hand |
+| **Output** | A concise summary highlighting the **research problem, approach, major findings and conclusion** |
+
 ## Why I Built This
 
 > [!NOTE]
 > **Built for peer review.** I was invited to serve as a **peer reviewer** for an international networking conference and was assigned **a large number of papers** to read, summarise and review. Going through every manuscript in full, just to find out where to focus, took far too long. **PaperLens is the tool I built to speed up that first pass.** In seconds it tells me what a paper sets out to solve, how it does it, what it found and what it concludes, so I can spend my time on the careful, critical part of the review.
 
-That need is also the **case study** this repository answers: *research paper abstract summarization with a pre-trained BERT model.*
+That need shaped the design: authors state their problem and outcomes in the Introduction and Conclusion, so PaperLens reads those two sections and returns a short, structured summary you can check against the paper in seconds.
 
 | A reviewer asks... | Where PaperLens answers |
 |---|---|
@@ -62,7 +66,6 @@ That need is also the **case study** this repository answers: *research paper ab
 
 ## Table of Contents
 - [Why I Built This](#why-i-built-this)
-- [Case Study](#case-study)
 - [Demo](#demo)
 - [Features](#features)
 - [Quick Start](#quick-start)
@@ -81,31 +84,6 @@ That need is also the **case study** this repository answers: *research paper ab
 - [Author](#author) · [License](#license)
 
 ---
-
-## Case Study
-
-### Problem statement
-A university research repository contains lengthy research papers that make it difficult for students and researchers to quickly understand the main contribution of a paper. The task is to develop a **text summarization model using a pre-trained BERT-based model in Google Colab with Python** that generates a concise summary of a research paper.
-
-| | |
-|---|---|
-| **Input** | Long research-paper content (Introduction and Conclusion) |
-| **Output** | A concise summary highlighting the **research problem, approach, major findings and conclusion** |
-
-### Requirements and where they are implemented
-
-| # | Requirement | Status | Implementation |
-|---|---|:---:|---|
-| 1 | Take the **Introduction and Conclusion** of a paper as input | ✅ | `pdf_utils.py` finds both sections automatically in a PDF; you can also paste them |
-| 2 | Use a **pre-trained BERT-based** summarization model | ✅ | `embedder.py` (BERT / SciBERT / Sentence-BERT) + `extractive.py` (K-Means / TextRank) |
-| 3 | Generate a **concise summary** with the key research information | ✅ | `pipeline.py`, with `structure.py` labelling problem / approach / findings / conclusion |
-| 4 | **Display** the original text and the generated summary | ✅ | *Summary*, *Highlighted paper* and *Original text* views in the web app |
-| 5 | **Compare** original and summarized text lengths | ✅ | `evaluate.py`: characters, words, sentences, compression %, reduction % |
-| ➕ | Graphs | ✅ | `visualize.py`: one 6-panel dashboard |
-| ➕ | Runs in **Google Colab** | ✅ | [`notebooks/Colab_Launcher.ipynb`](notebooks/Colab_Launcher.ipynb) |
-
-### Beyond the case study
-Paper links (arXiv / DOI / PDF URL) · safe downloader · automatic section detection · PDF-glitch cleaning · sentence-quality scoring · embedding centering · role labelling · ROUGE evaluation · multi-paper benchmark · web UI · CLI · Python API · 32 automated tests · export to Markdown / JSON.
 
 ---
 
@@ -379,7 +357,7 @@ flowchart LR
 | Step | What happens | Why |
 |---|---|---|
 | **1. Fetch** | `fetch.py` turns an arXiv id / DOI / link into a PDF and downloads it safely | One input box for any source |
-| **2. Find sections** | `pdf_utils.py` locates *Abstract*, *Introduction* and *Conclusion* by their headings | The case study uses exactly these sections: they hold the problem, motivation and results |
+| **2. Find sections** | `pdf_utils.py` locates *Abstract*, *Introduction* and *Conclusion* by their headings | These sections hold the problem, motivation and results, so they are the quickest way to grasp a paper |
 | **3. Clean and split** | `preprocess.py` repairs PDF glitches and splits the text into sentences, protecting `et al.`, `e.g.`, `Fig.` | Garbage in, garbage out |
 | **4. Embed** | A pre-trained BERT-style encoder turns each sentence into a vector (mean pooling, L2-normalised) | Similar meaning gives similar vectors |
 | **5. Centre** | The average vector is subtracted | Raw BERT vectors all point in a similar direction, so every sentence looks alike; centring restores contrast |
@@ -475,7 +453,7 @@ print(res.coverage, res.keyword_retention)
 | Name in the app | Hugging Face id | Size | Best for |
 |---|---|---|---|
 | **Sentence-BERT MiniLM** *(default)* | `sentence-transformers/all-MiniLM-L6-v2` | ~90 MB | fast, strong sentence similarity |
-| **BERT base** | `bert-base-uncased` | ~440 MB | the classic model from the case study |
+| **BERT base** | `bert-base-uncased` | ~440 MB | the classic, widely used BERT model |
 | **SciBERT** | `allenai/scibert_scivocab_uncased` | ~440 MB | scientific vocabulary |
 | **Baseline (no BERT)** | built-in word-count hashing | 0 | offline use and as a comparison baseline |
 | *Any BERT-style model* | pass the id with `embedding_model=` | – | your own experiments |
@@ -646,7 +624,7 @@ Being honest about what this does *not* do:
 **Cipher-Sheild**<br/>
 GitHub: [@Cipher-Sheild](https://github.com/Cipher-Sheild)
 
-Built as a case study on *Research Paper Abstract Summarization* using pre-trained BERT, to support my work as a conference peer reviewer.
+Built to support my work as a conference peer reviewer.
 
 ## License
 
