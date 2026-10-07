@@ -8,6 +8,7 @@
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![BERT](https://img.shields.io/badge/Model-BERT-6366f1?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)
+![Built for Peer Review](https://img.shields.io/badge/Built%20for-Peer%20Review-0ea5e9?style=for-the-badge)
 
 ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white)
 ![Transformers](https://img.shields.io/badge/Hugging%20Face-Transformers-FFD21E?style=flat-square&logo=huggingface&logoColor=black)
@@ -15,7 +16,7 @@
 ![Gradio](https://img.shields.io/badge/Gradio-Web%20UI-F97316?style=flat-square)
 ![Tests](https://img.shields.io/badge/tests-32%20passed-22c55e?style=flat-square)
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YOUR_USERNAME/paperlens/blob/main/notebooks/Colab_Launcher.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Cipher-Sheild/paperlens/blob/main/notebooks/Colab_Launcher.ipynb)
 
 **[Case Study](#case-study) · [Demo](#demo) · [Quick Start](#quick-start) · [How It Works](#how-it-works) · [Usage](#usage) · [Evaluation](#evaluation) · [FAQ](#troubleshooting--faq)**
 
@@ -38,7 +39,29 @@
 </tr>
 </table>
 
+## Why I Built This
+
+> [!NOTE]
+> **Built for peer review.** I was invited to serve as a **peer reviewer** for an international networking conference and was assigned **a large number of papers** to read, summarise and review. Going through every manuscript in full, just to find out where to focus, took far too long. **PaperLens is the tool I built to speed up that first pass.** In seconds it tells me what a paper sets out to solve, how it does it, what it found and what it concludes, so I can spend my time on the careful, critical part of the review.
+
+That need is also the **case study** this repository answers: *research paper abstract summarization with a pre-trained BERT model.*
+
+| A reviewer asks... | Where PaperLens answers |
+|---|---|
+| What problem does the paper tackle? | **Research Problem** card |
+| What did the authors do? | **Approach** card |
+| What did they find? | **Major Findings** card |
+| What do they conclude, and what are the limits? | **Conclusion** card |
+| Which sentences should I read first? | **Highlighted paper** view |
+| Does the abstract match the Introduction and Conclusion? | **ROUGE** overlap with the paper's own abstract (a rough signal only) |
+
+> [!IMPORTANT]
+> **Responsible use when reviewing.**
+> - PaperLens is an aid for a **first pass**. It does not replace reading the paper or your own judgement; the review remains your responsibility.
+> - Manuscripts under review are **confidential**. PaperLens runs every model **locally** and sends no paper text to any AI service. However, Google Colab, Hugging Face Spaces and `--share` links process files on **third-party or public infrastructure**, so check your conference's confidentiality policy first. For manuscripts under review, prefer [running it on your own computer](#option-2-run-on-your-own-computer) and never share a public link.
+
 ## Table of Contents
+- [Why I Built This](#why-i-built-this)
 - [Case Study](#case-study)
 - [Demo](#demo)
 - [Features](#features)
@@ -160,9 +183,9 @@ Colab is a free online notebook from Google. Nothing is installed on your comput
 
 **Step 2: Get the code.** Use **Method A** or **Method B** in a code cell.
 
-**Method A: clone from GitHub** (replace `YOUR_USERNAME`)
+**Method A: clone from GitHub**
 ```python
-!git clone https://github.com/YOUR_USERNAME/paperlens.git
+!git clone https://github.com/Cipher-Sheild/paperlens.git
 %cd paperlens
 ```
 
@@ -257,7 +280,7 @@ Prefer your own machine? These steps work on **Windows, macOS and Linux**. No GP
 
 - **With Git:**
   ```bash
-  git clone https://github.com/YOUR_USERNAME/paperlens.git
+  git clone https://github.com/Cipher-Sheild/paperlens.git
   ```
 - **Without Git:** on the GitHub page click **Code → Download ZIP**, then extract it (Windows: right-click → *Extract All*; macOS: double-click).
 
@@ -620,10 +643,10 @@ Being honest about what this does *not* do:
 
 ## Author
 
-**YOUR NAME**
-GitHub: [@YOUR_USERNAME](https://github.com/YOUR_USERNAME)
+**Cipher-Sheild**<br/>
+GitHub: [@Cipher-Sheild](https://github.com/Cipher-Sheild)
 
-Built as a case study on *Research Paper Abstract Summarization* using pre-trained BERT.
+Built as a case study on *Research Paper Abstract Summarization* using pre-trained BERT, to support my work as a conference peer reviewer.
 
 ## License
 
